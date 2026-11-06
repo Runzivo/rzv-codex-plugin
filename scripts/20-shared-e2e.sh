@@ -23,6 +23,7 @@ work="${E2E_WORK:-$(mktemp -d "${TMPDIR:-/tmp}/rzv-codex-e2e.XXXXXX")}"
 evidence="$work/evidence"
 name="codex-e2e-$(date +%s)"
 sandbox="" lock=""
+timeout_cmd="$(command -v timeout || command -v gtimeout || true)"
 mkdir -p "$evidence" "$work/cwd"
 export CODEX_HOME="$work/codex-home"
 log() { printf '%s %s\n' "$(date -u +%H:%M:%S)" "$*" | tee -a "$evidence/log.txt" >&2; }
@@ -32,10 +33,10 @@ field() { python3 -I -c 'import json,sys; d=json.load(sys.stdin)["sandbox"]; pri
 get() { "$rzv" sandboxes get "$sandbox" --json; }
 
 cleanup() {
-  status=$?
+  status="${1:-$?}"
   if [ -n "$sandbox" ]; then
     log "cleanup: deleting $sandbox"
-    "$rzv" sandboxes delete "$sandbox" --json >/dev/null 2>&1 || true
+    "$rzv" sandboxes delete "$sandbox" --json 2>&1 | tee -a "$evidence/log.txt" >&2 || log "cleanup delete failed: delete $sandbox by hand"
     rm -f "$HOME/.ssh/rzv/$sandbox.conf"
   fi
   rm -rf "$CODEX_HOME"
@@ -44,11 +45,13 @@ cleanup() {
   log "evidence: $evidence"
 }
 trap cleanup EXIT
+unlock_and_cleanup() { s=$?; rm -f "$lock/owner"; cleanup "$s"; }
 
 # codex <step> <prompt>: run one skill through Codex, keep a redacted transcript.
 codex_run() {
   step="$1"; shift
-  codex exec -m "$model" -c model_reasoning_effort=medium --sandbox danger-full-access \
+  # Each step gets at most 10 minutes, so a hung run cannot hold the sandbox.
+  ${timeout_cmd:+$timeout_cmd 600} codex exec -m "$model" -c model_reasoning_effort=medium --sandbox danger-full-access \
     --skip-git-repo-check -C "$work/cwd" --json "$1" < /dev/null 2>&1 | redact > "$evidence/$step.jsonl" || true
   python3 -I -c 'import json,sys
 for l in open(sys.argv[1]):
@@ -69,7 +72,7 @@ wait_status() {
 if [ -n "${E2E_LOCK_DIR:-}" ]; then
   until mkdir "$E2E_LOCK_DIR" 2>/dev/null; do log "waiting for $E2E_LOCK_DIR"; sleep 30; done
   lock="$E2E_LOCK_DIR"; echo "rzv-codex-plugin e2e $$" > "$lock/owner"
-  trap 'rm -f "$lock/owner"; cleanup' EXIT
+  trap unlock_and_cleanup EXIT
 fi
 log "rzv: $("$rzv" --version)"; log "codex: $(codex --version)"
 
@@ -114,7 +117,9 @@ python3 -I -c 'import sys; sys.exit(float(sys.argv[2]) <= float(sys.argv[1]))' "
 
 log "6. delete through \$runzivo:delete"
 codex_run delete "Use \$runzivo:delete to delete sandbox $sandbox ($name). I confirm: yes, delete $sandbox."
-st="$(get 2>/dev/null | field status || echo deleted)"
+if out="$(get 2>&1)"; then st="$(echo "$out" | field status)"
+elif echo "$out" | grep -q '"not_found"'; then st=deleted
+else fail "could not read the sandbox after delete: $out"; fi
 case "$st" in deleting|deleted|cleanup_pending) sandbox="" ;; *) fail "status after delete: $st" ;; esac
 log "   status after delete: $st"
 

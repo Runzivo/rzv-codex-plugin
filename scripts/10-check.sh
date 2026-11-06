@@ -25,8 +25,8 @@ for key in ("websiteURL", "supportURL", "privacyPolicyURL", "termsOfServiceURL")
     if not ui.get(key, "").startswith("https://"): err("interface." + key + " must be https")
 for key in ("logo", "composerIcon"):
     if not os.path.isfile(os.path.join(root, ui[key])): err(key + " file missing")
-listing = " ".join([m["description"], ui["shortDescription"], ui["longDescription"]] + ui.get("defaultPrompt", []))
-if re.search(r"(?i)\b(price|pricing|\$\d|CA\$|free trial|discount|subscri|credit)", listing): err("listing mentions pricing or credit")
+listing = [m["description"], ui["shortDescription"], ui["longDescription"]] + ui.get("defaultPrompt", [])
+PRICING = r"(?i)\b(price|pricing|\$\d|CA\$|free trial|discount|subscri|credit|charge|cost)"
 for bad in ("hooks", "apps", "mcpServers"):
     if bad in m: err("plugin.json must not declare " + bad)
 skills = os.path.join(root, m["skills"])
@@ -36,14 +36,19 @@ for d in sorted(os.listdir(skills)):
     fm = re.match(r"---\nname: (\S+)\ndescription: \"([^\"]+)\"\n---\n\n(.+)", text, re.S)
     if not fm: err(d + ": bad frontmatter"); continue
     if fm.group(1) != d: err(d + ": name differs from directory")
+    listing.append(fm.group(2))
+    listing.append(open(os.path.join(skills, d, "agents/openai.yaml")).read())
     if len(fm.group(2)) > 1024: err(d + ": description too long")
     if "codex-" not in text and d == "create": err("create must name sandboxes codex-<slug>")
     if re.search(r"exec [^\n]*--env|sandboxes exec", text): err(d + ": must not use rzv sandboxes exec")
     names.append(d)
+if re.search(PRICING, " ".join(listing)): err("listing or skill descriptions mention pricing, credit or cost")
 if names != ["connect", "create", "delete", "sleep-wake", "status"]: err("unexpected skills: %s" % names)
-for path in [os.path.join(dp, f) for dp, _, fs in os.walk(".") if ".git" not in dp for f in fs if f != "10-check.sh"]:
-    if path.endswith((".md", ".json", ".yaml", ".sh")) and re.search(r"(?i)internal\.|\.lan\b|tnt_[0-9a-f]{8}|sk-[A-Za-z0-9]{20}", open(path).read()):
+for path in [os.path.join(dp, f) for dp, _, fs in os.walk(".") if not (dp + "/").startswith("./.git/") for f in fs if f != "10-check.sh"]:
+    if path.endswith((".md", ".json", ".yaml", ".sh")) and re.search(r"(?i)internal\.|\.lan\b|tnt_[0-9a-f]{8}|sk-[A-Za-z0-9_-]{20}", open(path).read()):
         err(path + ": looks internal or secret")
+for doc in ["README.md", "AGENTS.md"] + ["docs/" + f for f in os.listdir("docs")]:
+    if sum(1 for _ in open(doc)) > 60: err(doc + ": over 60 lines")
 if errors: sys.exit("\n".join(errors))
 print("plugin ok:", m["name"], m["version"], names)
 PY

@@ -2,7 +2,7 @@
 
 ## What the plugin is
 
-Markdown skills and a manifest. No code runs except the `rzv`, `ssh`, `scp` and `rsync` commands Codex shows you. All logic is in the public [`rzv` CLI](https://github.com/Runzivo/rzv-cli).
+Markdown skills and a manifest. No code runs except the `rzv`, `ssh`, `scp` and `rsync` commands Codex shows you, plus `rm -f ~/.ssh/rzv/<id>.conf` to remove a deleted sandbox's SSH alias. All logic is in the public [`rzv` CLI](https://github.com/Runzivo/rzv-cli).
 
 ## Credentials
 

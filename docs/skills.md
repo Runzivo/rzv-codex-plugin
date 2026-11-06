@@ -8,11 +8,11 @@ Every skill finds `rzv` in `RZV_BIN`, then `PATH`, then `~/.local/bin/rzv`, and 
 | `connect` | `sandboxes list`, `sandboxes ssh-config <id> --write`, then `ssh`, `scp` or `rsync` to `<id>.rzv` |
 | `status` | `sandboxes list`, `sandboxes get` |
 | `sleep-wake` | `sandboxes stop`, `sandboxes start`, `sandboxes get` |
-| `delete` | `sandboxes list`, `sandboxes delete` (after you confirm) |
+| `delete` | `sandboxes list`, `sandboxes delete` (after you confirm), then `rm -f ~/.ssh/rzv/<id>.conf` |
 
 ## Sizes and lifetimes
 
-Sizes are `2vcpu-8gb` (default), `4vcpu-16gb`, `8vcpu-32gb` and `16vcpu-64gb`. `rzv sandboxes sizes` shows what your environment offers. The lifetime is `8h` (default), `12h` or `24h` and cannot be extended. When it ends the sandbox stops and its temporary files are deleted.
+Sizes are `2vcpu-8gb` (default), `4vcpu-16gb`, `8vcpu-32gb` and `16vcpu-64gb`. `rzv sandboxes sizes` shows what your environment offers. The lifetime is `8h` (default), `12h` or `24h` and cannot be extended. When it ends the sandbox stops and all its files, including `/workspace`, are deleted.
 
 ## Sleep and wake
 
