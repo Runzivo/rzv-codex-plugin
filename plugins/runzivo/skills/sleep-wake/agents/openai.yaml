@@ -1,0 +1,5 @@
+interface:
+  display_name: "Runzivo sleep and wake"
+  short_description: "Sleep and wake a sandbox"
+policy:
+  allow_implicit_invocation: true

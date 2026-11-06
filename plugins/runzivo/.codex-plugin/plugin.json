@@ -1,0 +1,35 @@
+{
+  "name": "runzivo",
+  "version": "0.1.0",
+  "description": "Create, connect to, check, sleep, wake and delete Runzivo cloud sandboxes from Codex through the rzv CLI.",
+  "author": {
+    "name": "Runzivo",
+    "url": "https://runzivo.dev"
+  },
+  "homepage": "https://runzivo.dev/sandboxes/",
+  "repository": "https://github.com/Runzivo/rzv-codex-plugin",
+  "license": "MIT",
+  "keywords": ["sandbox", "cloud VM", "remote development", "SSH", "Firecracker"],
+  "skills": "./skills/",
+  "requires_local_executor": true,
+  "interface": {
+    "displayName": "Runzivo Sandboxes",
+    "shortDescription": "Cloud sandboxes over SSH",
+    "longDescription": "Run work in a Runzivo cloud sandbox: a Linux Firecracker microVM you reach over SSH. Codex creates the sandbox with the size and lifetime you choose, connects to it, shows its status, time left and credits used, puts it to sleep and wakes it, and deletes it after you confirm. Everything goes through the open-source rzv CLI and your own Runzivo sign-in. The plugin stores no tokens and calls no API itself. Needs rzv 0.26.0 or later and a Runzivo account.",
+    "developerName": "Runzivo",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://runzivo.dev/sandboxes/",
+    "supportURL": "https://runzivo.dev/docs/troubleshooting/",
+    "privacyPolicyURL": "https://runzivo.dev/legal/privacy/",
+    "termsOfServiceURL": "https://runzivo.dev/legal/terms/",
+    "defaultPrompt": [
+      "Create a Runzivo sandbox and connect to it",
+      "Show my Runzivo sandboxes and their time left",
+      "Put my Runzivo sandbox to sleep"
+    ],
+    "brandColor": "#0B5FFF",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/icon.png"
+  }
+}

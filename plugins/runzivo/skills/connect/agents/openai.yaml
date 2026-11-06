@@ -1,0 +1,5 @@
+interface:
+  display_name: "Runzivo connect"
+  short_description: "Connect over SSH"
+policy:
+  allow_implicit_invocation: true

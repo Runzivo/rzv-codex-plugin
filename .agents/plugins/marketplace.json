@@ -1,0 +1,20 @@
+{
+  "name": "runzivo",
+  "interface": {
+    "displayName": "Runzivo"
+  },
+  "plugins": [
+    {
+      "name": "runzivo",
+      "source": {
+        "source": "local",
+        "path": "./plugins/runzivo"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

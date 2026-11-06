@@ -1,0 +1,5 @@
+interface:
+  display_name: "Runzivo create"
+  short_description: "Create a cloud sandbox"
+policy:
+  allow_implicit_invocation: true
