@@ -1,0 +1,5 @@
+interface:
+  display_name: "Runzivo status"
+  short_description: "Status and time left"
+policy:
+  allow_implicit_invocation: true
