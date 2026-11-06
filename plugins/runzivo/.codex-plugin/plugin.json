@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "Runzivo Sandboxes",
     "shortDescription": "Cloud sandboxes over SSH",
-    "longDescription": "Run work in a Runzivo cloud sandbox: a Linux Firecracker microVM you reach over SSH. Codex creates the sandbox with the size and lifetime you choose, connects to it, shows its status, time left and credits used, puts it to sleep and wakes it, and deletes it after you confirm. Everything goes through the open-source rzv CLI and your own Runzivo sign-in. The plugin stores no tokens and calls no API itself. Needs rzv 0.26.0 or later and a Runzivo account.",
+    "longDescription": "Run work in a Runzivo cloud sandbox: a Linux Firecracker microVM you reach over SSH. Codex creates the sandbox with the size and lifetime you choose, connects to it, shows its status and time left, puts it to sleep and wakes it, and deletes it after you confirm. Everything goes through the open-source rzv CLI and your own Runzivo sign-in. The plugin stores no tokens and calls no API itself. Needs rzv 0.26.0 or later and a Runzivo account.",
     "developerName": "Runzivo",
     "category": "Developer Tools",
     "capabilities": ["Interactive", "Read", "Write"],
